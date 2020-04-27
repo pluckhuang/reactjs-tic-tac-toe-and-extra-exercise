@@ -100,6 +100,28 @@ class Game extends React.Component {
         });
     }
 
+    getCurrentStepIndex() {
+        const history = this.state.history;
+        const stepNumber = this.state.stepNumber;
+        const current = history[stepNumber].squares;
+        const previous = stepNumber > 0 ? history[stepNumber - 1].squares : Array(9).fill(null);
+
+        let currentStepIndex = null;
+        for (let i = 0; i < current.length; i++) {
+            if (current[i] !== previous[i]) {
+                currentStepIndex = i;
+                break;
+            }
+        }
+        return currentStepIndex;
+    }
+
+    getStepCoordinateFrom(i) {
+        return i !== null ?
+            (<div>step: {parseInt(i / 3) + 1}, {i % 3 + 1}</div>) :
+            null;
+    }
+
     render() {
         const history = this.state.history;
         const current = history[this.state.stepNumber];
@@ -123,6 +145,8 @@ class Game extends React.Component {
             status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
         }
 
+        const stepCoordinate = this.getStepCoordinateFrom(this.getCurrentStepIndex());
+
         return (
             <div className="game">
                 <div className="game-board">
@@ -134,6 +158,7 @@ class Game extends React.Component {
                 <div className="game-info">
                     <div>{status}</div>
                     <ol>{moves}</ol>
+                    <div>{stepCoordinate}</div>
                 </div>
             </div>
         );
