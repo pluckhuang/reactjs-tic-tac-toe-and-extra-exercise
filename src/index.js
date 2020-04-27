@@ -2,19 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-// class Square extends React.Component {
-//     render() {
-//         return (
-//             <button
-//                 className="square"
-//                 onClick={() => this.props.onClick()}
-//             >
-//                 {this.props.value}
-//             </button >
-//         );
-//     }
-// }
-
 function Square(props) {
     return (
         <button className="square" onClick={props.onClick}>
@@ -24,17 +11,10 @@ function Square(props) {
 }
 
 class Board extends React.Component {
-    // constructor(props) {
-    //     super(props);
-    //     this.state = {
-    //         squares: Array(9).fill(null),
-    //         xIsNext: true,
-    //     };
-    // }
-
     renderSquare(i) {
         return (
             <Square
+                key={i}
                 value={this.props.squares[i]}
                 onClick={() => this.props.onClick(i)}
             />
@@ -50,7 +30,7 @@ class Board extends React.Component {
                 eachColumn.push(this.renderSquare(squareIndex))
             }
             board.push(
-                <div className="board-row">
+                <div key={row} className="board-row">
                     {eachColumn}
                 </div>
             );
@@ -61,7 +41,7 @@ class Board extends React.Component {
     render() {
         return (
             <div>
-                {this.genSquare(3, 3)}
+                {this.genSquare(this.props.columns, this.props.rows)}
             </div>
         )
     }
@@ -76,6 +56,9 @@ class Game extends React.Component {
             }],
             stepNumber: 0,
             xIsNext: true,
+            columns: 3,
+            rows: 3,
+            listIsReversed: false,
         }
     }
 
@@ -120,17 +103,24 @@ class Game extends React.Component {
     }
 
     getStepCoordinateFrom(i) {
+        let columns = this.state.columns;
         return i !== null ?
-            (<div>current step: {i % 3 + 1}, {parseInt(i / 3) + 1}</div>) :
+            (<div>current step: {i % columns + 1}, {parseInt(i / columns) + 1}</div>) :
             null;
     }
 
+    reverseList() {
+        this.setState({
+            listIsReversed: !this.state.listIsReversed,
+        })
+    }
+
     render() {
-        const history = this.state.history;
+        let history = this.state.history;
         const current = history[this.state.stepNumber];
         const winner = calculateWinner(current.squares);
 
-        const moves = history.map((step, move) => {
+        let moves = history.map((step, move) => {
             const desc = move ?
                 'Go to move #' + move :
                 'Go to game start';
@@ -141,6 +131,10 @@ class Game extends React.Component {
             );
         });
 
+        if (this.state.listIsReversed) {
+            moves.reverse();
+        }
+
         let status;
         if (winner) {
             status = 'Winner: ' + winner;
@@ -148,7 +142,7 @@ class Game extends React.Component {
             status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
         }
 
-        const stepCoordinate = this.getStepCoordinateFrom(this.getCurrentStepIndex());
+        let stepCoordinate = this.getStepCoordinateFrom(this.getCurrentStepIndex());
 
         return (
             <div className="game">
@@ -156,11 +150,14 @@ class Game extends React.Component {
                     <Board
                         squares={current.squares}
                         onClick={(i) => this.handleClick(i)}
+                        columns={this.state.columns}
+                        rows={this.state.rows}
                     />
                 </div>
                 <div className="game-info">
                     <div>{status}</div>
-                    <ol>{moves}</ol>
+                    <button onClick={() => this.reverseList()}>change list order</button>
+                    <ol className="historyList" reversed={this.state.listIsReversed}>{moves}</ol>
                     <div>{stepCoordinate}</div>
                 </div>
             </div>
