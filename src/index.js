@@ -118,7 +118,7 @@ class Game extends React.Component {
 
     getStepCoordinateFrom(i) {
         return i !== null ?
-            (<div>step: {parseInt(i / 3) + 1}, {i % 3 + 1}</div>) :
+            (<div>current step: {parseInt(i / 3) + 1}, {i % 3 + 1}</div>) :
             null;
     }
 
@@ -133,7 +133,7 @@ class Game extends React.Component {
                 'Go to game start';
             return (
                 <li key={move}>
-                    <button onClick={() => this.jumpTo(move)}>{desc}</button>
+                    <button className="jumpHistory" onClick={() => this.jumpTo(move)}>{desc}</button>
                 </li>
             );
         });
