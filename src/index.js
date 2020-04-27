@@ -118,11 +118,7 @@ class Game extends React.Component {
         })
     }
 
-    render() {
-        let history = this.state.history;
-        const current = history[this.state.stepNumber];
-        const winner = calculateWinner(current.squares);
-
+    genHistoryMove(history) {
         let moves = history.map((step, move) => {
             const desc = move ?
                 'Go to move #' + move :
@@ -133,14 +129,22 @@ class Game extends React.Component {
                 </li>
             );
         });
+        return moves;
+    }
 
+    render() {
+        let move = this.genHistoryMove(this.state.history);
         if (this.state.listIsReversed) {
             moves.reverse();
         }
 
         let status;
+        const current = history[this.state.stepNumber];
+        const winner = calculateWinner(current.squares);
         if (winner.winner) {
             status = 'Winner: ' + winner.winner;
+        } else if (winner.isDrawn) {
+            status = 'X drew with O.'
         } else {
             status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
         }
@@ -187,14 +191,17 @@ function calculateWinner(squares) {
     ];
     let winnerInfo = {
         winner: null,
-        line: new Set([])
+        line: new Set([]),
+        isDrawn: false,
     };
     for (let i = 0; i < lines.length; i++) {
         const [a, b, c] = lines[i];;
         if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
             winnerInfo.winner = squares[a];
             winnerInfo.line = new Set(lines[i]);
+            return winnerInfo;
         }
     }
+    winnerInfo.isDrawn = new Set(squares).size === 2 ? true : false;
     return winnerInfo;
 }
