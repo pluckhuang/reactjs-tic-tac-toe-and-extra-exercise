@@ -118,7 +118,7 @@ class Game extends React.Component {
 
     getStepCoordinateFrom(i) {
         return i !== null ?
-            (<div>current step: {parseInt(i / 3) + 1}, {i % 3 + 1}</div>) :
+            (<div>current step: {i % 3 + 1}, {parseInt(i / 3) + 1}</div>) :
             null;
     }
 
