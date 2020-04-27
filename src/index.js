@@ -41,26 +41,29 @@ class Board extends React.Component {
         )
     }
 
+    genSquare(columns, rows) {
+        const board = []
+        for (let row = 0; row < rows; row++) {
+            let eachColumn = []
+            for (let column = 0; column < columns; column++) {
+                let squareIndex = row * columns + column;
+                eachColumn.push(this.renderSquare(squareIndex))
+            }
+            board.push(
+                <div className="board-row">
+                    {eachColumn}
+                </div>
+            );
+        }
+        return board
+    }
+
     render() {
         return (
             <div>
-                <div className="board-row">
-                    {this.renderSquare(0)}
-                    {this.renderSquare(1)}
-                    {this.renderSquare(2)}
-                </div>
-                <div className="board-row">
-                    {this.renderSquare(3)}
-                    {this.renderSquare(4)}
-                    {this.renderSquare(5)}
-                </div>
-                <div className="board-row">
-                    {this.renderSquare(6)}
-                    {this.renderSquare(7)}
-                    {this.renderSquare(8)}
-                </div>
+                {this.genSquare(3, 3)}
             </div>
-        );
+        )
     }
 }
 
