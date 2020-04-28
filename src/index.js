@@ -132,22 +132,28 @@ class Game extends React.Component {
         return moves;
     }
 
-    render() {
-        let move = this.genHistoryMove(this.state.history);
-        if (this.state.listIsReversed) {
-            moves.reverse();
-        }
-
+    genDisplayStatus(winnerInfo) {
         let status;
-        const current = history[this.state.stepNumber];
-        const winner = calculateWinner(current.squares);
-        if (winner.winner) {
-            status = 'Winner: ' + winner.winner;
-        } else if (winner.isDrawn) {
+        if (winnerInfo.winner) {
+            status = 'Winner: ' + winnerInfo.winner;
+        } else if (winnerInfo.isDrawn) {
             status = 'X drew with O.'
         } else {
             status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
         }
+        return status;
+    }
+
+    render() {
+        let history = this.state.history;
+        const winnerInfo = calculateWinner(history[this.state.stepNumber].squares);
+
+        let moves = this.genHistoryMove(history);
+        if (this.state.listIsReversed) {
+            moves.reverse();
+        }
+
+        let status = this.genDisplayStatus(winnerInfo);
 
         let stepCoordinate = this.getStepCoordinateFrom(this.getCurrentStepIndex());
 
@@ -155,11 +161,11 @@ class Game extends React.Component {
             <div className="game">
                 <div className="game-board">
                     <Board
-                        squares={current.squares}
+                        squares={history[this.state.stepNumber].squares}
                         onClick={(i) => this.handleClick(i)}
                         columns={this.state.columns}
                         rows={this.state.rows}
-                        line={winner.line}
+                        line={winnerInfo.line}
                     />
                 </div>
                 <div className="game-info">
